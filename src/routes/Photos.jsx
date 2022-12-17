@@ -12,54 +12,66 @@ const Photos = () => {
 
   const deletePhoto = (id) => {
     // TODO: answer here
-    const url = "https://gallery-app-server.vercel.app/photos/" + id
-    fetch (url, {method: "DELETE"})
-    .then(res => res.json())
-    .then(() =>{
-      setPhotos(result => {
-        return result.filter(x => x.id !== id)
-      })
-    })
-  };
-
-  const submit = async () => {
-    try {
-      const url = "https://gallery-app-server.vercel.app/photos?q=" + submited;
-      const res = await fetch(url);
-      const result = await res.json();
-      setPhotos(result);
-      setLoading(false);
-    } catch (error) {
-      setError(error);
-    }
+    const url = "https://gallery-app-server.vercel.app/photos/" + id;
+    fetch(url, { method: "DELETE" })
+      .then((res) => res.json())
+      .then(() => {
+        setPhotos((result) => {
+          return result.filter((x) => x.id !== id);
+        });
+      });
   };
 
   useEffect(() => {
     setLoading(true);
-    if (sort === "asc") {
-      fetch("https://gallery-app-server.vercel.app/photos")
-        .then((res) => res.json())
-        .then((res) => {
-          setPhotos(res);
+    if (sort) {
+      fetch(`https://gallery-app-server.vercel.app/photos?q=${sort}`)
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          setPhotos(data);
           setLoading(false);
-        })
-        .catch((error) => setError(error));
-      submited ? submit() : setError(error);
-    } else {
-      fetch("https://gallery-app-server.vercel.app/photos/?_sort=id&_order=desc")
-        .then((res) => res.json())
-        .then((res) => {
-          setPhotos(res);
-          setLoading(false);
-        })
-        .catch((error) => {
-          setError(error);
         });
-    };
-    submit ()
-  }, [error, sort, submited]);
+    }
+    if (submited) {
+      fetch(`https://gallery-app-server.vercel.app/photos?q=${submited}`)
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          setPhotos(data);
+          setLoading(false);
+        });
+    }
+    if (search) {
+      fetch(`https://gallery-app-server.vercel.app/photos?q=${search}`)
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          setPhotos(data);
+          setLoading(false);
+        });
+    }
+  }, [sort, submited, search]);
 
-  if (error) return <h1 style={{ width: "100%", textAlign: "center", marginTop: "20px" }} >Error!</h1>;
+  useEffect(() => {
+    setLoading(true);
+    fetch("https://gallery-app-server.vercel.app/photos/?_sort=id&_order=desc")
+      .then((res) => res.json())
+      .then((res) => {
+        setPhotos(res);
+        setLoading(false);
+      })
+      .catch((error) => {
+        setError(error);
+      });
+  }, []);
+
+  if (error)
+    return (
+      <h1 style={{ width: "100%", textAlign: "center", marginTop: "20px" }}>
+        Error!
+      </h1>
+    );
 
   return (
     <>
