@@ -25,13 +25,16 @@ const AddPhoto = () => {
     })
       .then((res) => res.json())
       .then((result) => {
-        switch (notFalse) {
-          case result.error:
-            setError(result.error);
-            break;
-          default:
-            navigate("/photos");
-        }
+        if (result.error) {
+          setError(result.error)
+        }else{navigate("/photos")}
+        // switch () {
+        //   case result.error:
+        //     setError(result.error);
+        //     break;
+        //   default:
+        //     navigate("/photos");
+        // }
       })
       .catch((error) => {
         setError(error);
